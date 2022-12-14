@@ -1,4 +1,5 @@
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -315,7 +316,7 @@ class ChatGPT:
         self.driver.close()
         self.driver.switch_to.window(original_window)
         
-    def __click_try_again(self):
+    def __click_try_again(self) -> WebElement:
         self.__verbose_print('Click try again button')
         try_again = self.driver.find_elements(By.XPATH, '//*[@id="__next"]/div[2]/div[1]/main/div[2]/form/div/div[1]/button')[-1]
         try_again.click()
