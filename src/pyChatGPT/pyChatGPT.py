@@ -331,7 +331,7 @@ class ChatGPT:
     
     def __click_try_again(self) -> WebElement:
         self.__verbose_print('[try_again] Click try again button')
-        try_again = self.driver.find_elements(By.XPATH, '//button[text()="Try again"]')[-1]
+        try_again = self.driver.find_elements(By.XPATH, "//button[text()='Try again']")[-1]
         try_again.click()
 
         response = self.driver.find_elements(
