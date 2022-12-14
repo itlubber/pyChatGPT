@@ -312,6 +312,29 @@ class ChatGPT:
         self.__verbose_print('Closing tab')
         self.driver.close()
         self.driver.switch_to.window(original_window)
+        
+    def __click_try_again(self):
+        self.__verbose_print('Click try again button')
+        try_again = self.driver.find_elements(By.XPATH, '//*[@id="__next"]/div[2]/div[1]/main/div[2]/form/div/div[1]/button')[-1]
+        try_again.click()
+
+        request = self.driver.find_elements(
+            By.XPATH, "//div[starts-with(@class, 'request-:')]"
+        )[-1]
+
+        # Wait for the response to be ready
+        self.__verbose_print('Waiting for completion')
+        WebDriverWait(self.driver, 90).until_not(
+            EC.presence_of_element_located((By.CLASS_NAME, 'result-streaming'))
+        )
+
+        # Check if the response is an error
+        self.__verbose_print('Checking if response is an error')
+        if 'text-red' in request.get_attribute('class'):
+            self.__verbose_print('Response is an error')
+            raise ValueError(request.text)
+
+        return request
 
     def send_message(self, message: str) -> dict:
         '''
@@ -361,7 +384,8 @@ class ChatGPT:
         self.__verbose_print('Checking if response is an error')
         if 'text-red' in request.get_attribute('class'):
             self.__verbose_print('Response is an error')
-            raise ValueError(request.text)
+            request = self.__click_try_again()
+            
         self.__verbose_print('Response is not an error')
 
         # Return the response
